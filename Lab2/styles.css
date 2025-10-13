@@ -1,0 +1,82 @@
+/* styles.css */
+
+body {
+    margin: 20px;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 1200px;
+}
+
+.header {
+    grid-column: 1 / -1;
+    background: #2c3e50;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+.sidebar {
+    grid-column: 1 / 2;
+    background: #ecf0f1;
+    padding: 20px;
+}
+
+.main {
+    grid-column: 2 / -1;
+    background: #fff;
+    padding: 20px;
+}
+
+.footer {
+    grid-column: 1 / -1;
+    background: #34495e;
+    color: #fff;
+    padding: 15px;
+    text-align: center;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 1200px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+label {
+    margin-bottom: 5px;
+}
+
+input, select {
+    padding: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+}
+
+button {
+    padding: 1px 4px;
+    cursor: pointer;
+}

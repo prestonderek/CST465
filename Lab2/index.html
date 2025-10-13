@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Lab2 Index</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>CST465 - Lab 2</h1>
+    <form method="post" action="https://otapp-cstwebdev.azurewebsites.net">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="StudentID"><strong>Student ID</strong></label>
+                <input type="text" id="StudentID" name="StudentID" maxlength="9" placeholder="918..."/>
+            </div>
+
+            <div class="form-group">
+                <label for="Name"><strong>Name</strong></label>
+                <input type="text" id="Name" name="Name"/>
+                <input type="hidden" name="Nickname" value="Programmer">
+            </div>
+
+            <div class="form-group">
+                <label for="EmailAddress"><strong>Email Address</strong></label>
+                <input type="email" id="EmailAddress" name="EmailAddress"/>
+            </div>
+
+            <div class="form-group">
+                <label for="Hobby"><strong>Hobby</strong></label>
+                <input type="text" id="Hobby" name="Hobby"/>
+            </div>
+
+            <div class="form-group">
+                <label for="UserType"><strong>User Type</strong></label>
+                <select name="UserType" id="UserType" size="1">
+                    <option value="Student">Student</option>
+                    <option value="Faculty">Faculty</option>
+                    <option value="Admin">Professor</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="Band"><strong>Band</strong></label>
+                <input type="text" id="Band" name="Band"/>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="Biography"><strong>Biography</strong></label>
+                <textarea id="Biography" name="Biography" rows="4" placeholder="Tell us about yourself..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="CoursePrefix"><strong>Course Prefix</strong></label>
+                <input type="text" id="CoursePrefix" name="CoursePrefix" maxlength="4"/>
+            </div>
+
+            <div class="form-group">
+                <label for="CourseNumber"><strong>Course Number</strong></label>
+                <input type="text" id="CourseNumber" name="CourseNumber" maxlength="3"/>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="CourseDescription"><strong>Course Description</strong></label>
+                <textarea id="CourseDescription" name="CourseDescription" rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+                <button type="Submit">Submit</button>
+            </div>
+        </div>
+    </form>
+</body>
+</html>
