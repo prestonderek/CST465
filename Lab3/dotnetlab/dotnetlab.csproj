@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <using Include="Microsoft.AspNetCore.Mvc" />
+  </ItemGroup>
+
 </Project>
