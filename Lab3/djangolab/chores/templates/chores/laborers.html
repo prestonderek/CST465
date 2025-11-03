@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Chore Laborers</title>
+</head>
+<body>
+    <h1>Chore Laborers</h1>
+    <ul>
+    {% for laborer in workforce.laborers %}
+        <li>{{ laborer.name }} is {{ laborer.age }} years old and ranks a {{ laborer.difficulty }} on the difficulty scale</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
