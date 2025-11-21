@@ -1,0 +1,23 @@
+﻿@model Lab6.Models.BlogPostModel
+
+@{
+    ViewData["Title"] = Model.Title;
+    var dateFormat = (string)ViewBag.DateFormat;
+}
+
+<div class="card">
+    <div class="card-body">
+        <h1 class="card-title">@Model.Title</h1>
+        <h6 class="card-subtitle mb-2 text-muted">
+            @Model.Author • @Model.Timestamp?.ToString(dateFormat)
+        </h6>
+        <hr />
+        <p class="card-text">
+            @Html.Raw(Html.Encode(Model.Content).Replace("\n", "<br />"))
+        </p>
+    </div>
+    <div class="card-footer d-flex justify-content-between">
+        <a asp-action="Index" class="btn btn-link">Back to list</a>
+        <a asp-action="Edit" asp-route-id="@Model.ID" class="btn btn-secondary">Edit</a>
+    </div>
+</div>
