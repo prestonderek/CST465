@@ -2,11 +2,13 @@
 using Lab6.Extensions;
 using Lab6.Logic;
 using Lab6.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace Lab6.Controllers
 {
+    [Authorize]
     public class BlogController : Controller
     {
         private readonly IBlogRepo _repo;
@@ -18,9 +20,10 @@ namespace Lab6.Controllers
             _config = config.Value;
         }
 
-        public IActionResult Index()
+        [AllowAnonymous]
+        public async Task<IActionResult> Index()
         {
-            var posts = _repo.GetAll()
+            var posts = (await _repo.GetAllAsync())
                 .OrderByDescending(p => p.TimeStamp)
                 .Select(p => p.ToView())
                 .ToList();
@@ -31,12 +34,13 @@ namespace Lab6.Controllers
             return View(posts);
         }
 
-        public IActionResult Details(int id)
+        [AllowAnonymous]
+        public async Task<IActionResult> Details(int id)
         {
-            var post = _repo.GetById(id);
+            var post = await _repo.GetByIdAsync(id);
             if (post == null) return NotFound();
 
-            var model = post.ToView();
+            var model = post.ToView(); // Ensure 'post' is awaited and is of type 'BlogPost'  
             ViewBag.DateFormat = _config.DateFormatSwitch;
 
             return View(model);
@@ -58,15 +62,15 @@ namespace Lab6.Controllers
             var data = model.ToData();
             data.ID = null;
 
-            _repo.Upsert(data);
+            _repo.UpsertAsync(data);
 
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var post = _repo.GetById(id);
+            var post = await _repo.GetByIdAsync(id); // Ensure 'post' is awaited and is of type 'BlogPost'  
             if (post == null) return NotFound();
 
             var model = post.ToView();
@@ -74,7 +78,7 @@ namespace Lab6.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(int id, BlogPostModel model)
+        public async Task<IActionResult> Edit(int id, BlogPostModel model)
         {
             if (id != model.ID)
             {
@@ -86,14 +90,14 @@ namespace Lab6.Controllers
                 return View(model);
             }
 
-            var exists = _repo.GetById(id);
+            var exists = await _repo.GetByIdAsync(id); // Await the Task<BlogPost> to get the BlogPost object
             if (exists == null) return NotFound();
 
             exists.Title = model.Title;
             exists.Content = model.Content;
             exists.Author = model.Author;
 
-            _repo.Upsert(exists);
+            _repo.UpsertAsync(exists);
 
             return RedirectToAction(nameof(Index));
         }

@@ -13,7 +13,7 @@ namespace Lab6.Logic
             _connectionString = configuration.GetConnectionString("DB_BlogPosts");
         }
 
-        public IEnumerable<BlogPost> GetAll()
+        public async Task<IEnumerable<BlogPost>> GetAllAsync()
         {
             var list = new List<BlogPost>();
 
@@ -21,34 +21,40 @@ namespace Lab6.Logic
             using var command = new SqlCommand("BlogPost_GetList", connection);
             command.CommandType = CommandType.StoredProcedure;
 
-            connection.Open();
-            using var reader = command.ExecuteReader();
-
-            while (reader.Read())
+            try
             {
-                list.Add(new BlogPost
-                {
-                    ID = reader.GetInt32("ID"),
-                    Title = reader.GetString("Title"),
-                    Content = reader.GetString("Content"),
-                    Author = reader.GetString("Author"),
-                    TimeStamp = reader.GetDateTime("Timestamp")
-                });
-            }
+                await connection.OpenAsync();
+                using var reader = await command.ExecuteReaderAsync();
 
+                while (await reader.ReadAsync())
+                {
+                    list.Add(new BlogPost
+                    {
+                        ID = reader.GetInt32("ID"),
+                        Title = reader.GetString("Title"),
+                        Content = reader.GetString("Content"),
+                        Author = reader.GetString("Author"),
+                        TimeStamp = reader.GetDateTime("Timestamp")
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
             return list;
         }
 
-        public BlogPost GetById(int id)
+        public async Task<BlogPost> GetByIdAsync(int id)
         {
             using var connection = new SqlConnection(_connectionString);
             using var command = new SqlCommand("BlogPost_Get", connection);
             command.CommandType = CommandType.StoredProcedure;
             command.Parameters.AddWithValue("@ID", id);
 
-            connection.Open();
-            using var reader = command.ExecuteReader();
-            if (reader.Read())
+            await connection.OpenAsync();
+            using var reader = await command.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
             {
                 return new BlogPost
                 {
@@ -63,7 +69,7 @@ namespace Lab6.Logic
             return null;
         }
 
-        public void Upsert(BlogPost post)
+        public async Task UpsertAsync(BlogPost post)
         {
             using var connection = new SqlConnection(_connectionString);
             using var command = new SqlCommand("BlogPost_Upsert", connection);
@@ -78,8 +84,8 @@ namespace Lab6.Logic
             command.Parameters.AddWithValue("@Content", post.Content);
             command.Parameters.AddWithValue("@Author", post.Author);
 
-            connection.Open();
-            command.ExecuteNonQuery();
+            await connection.OpenAsync();
+            await command.ExecuteNonQueryAsync();
         }
     }
 }

@@ -2,8 +2,8 @@
 {
     public interface IBlogRepo
     {
-        IEnumerable<BlogPost> GetAll();
-        BlogPost GetById(int id);
-        void Upsert(BlogPost post);
+        Task<IEnumerable<BlogPost>> GetAllAsync();
+        Task<BlogPost> GetByIdAsync(int id);
+        Task UpsertAsync(BlogPost post);
     }
 }
