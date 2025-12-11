@@ -1,32 +1,28 @@
 ﻿using Lab6.Config;
-using Lab6.Extensions;
 using Lab6.Logic;
 using Lab6.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 namespace Lab6.Controllers
 {
-    [Authorize]
     public class BlogController : Controller
     {
         private readonly IBlogRepo _repo;
         private readonly BlogConfig _config;
 
-        public BlogController(IBlogRepo repo, IOptionsSnapshot<BlogConfig> config)
+        public BlogController(IBlogRepo repo, IOptions<BlogConfig> blogOptions)
         {
             _repo = repo;
-            _config = config.Value;
+            _config = blogOptions.Value;
         }
 
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var posts = (await _repo.GetAllAsync())
-                .OrderByDescending(p => p.TimeStamp)
-                .Select(p => p.ToView())
-                .ToList();
+            var posts = await _repo.GetAllAsync();
 
             ViewBag.DateFormat = _config.DateFormatSwitch;
             ViewBag.SummaryWordCount = _config.SummaryWordCount;
@@ -40,65 +36,84 @@ namespace Lab6.Controllers
             var post = await _repo.GetByIdAsync(id);
             if (post == null) return NotFound();
 
-            var model = post.ToView(); // Ensure 'post' is awaited and is of type 'BlogPost'  
             ViewBag.DateFormat = _config.DateFormatSwitch;
+
+            var model = new BlogPostModel
+            {
+                ID = post.ID,
+                Title = post.Title,
+                Content = post.Content,
+                Author = post.Author,
+                Timestamp = post.TimeStamp
+            };
 
             return View(model);
         }
 
+        [Authorize]
         public IActionResult Create()
         {
             return View(new BlogPostModel());
         }
 
         [HttpPost]
-        public IActionResult Create(BlogPostModel model)
+        [Authorize]
+        public async Task<IActionResult> Create(BlogPostModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var data = model.ToData();
-            data.ID = null;
+            var post = new BlogPost
+            {
+                Title = model.Title,
+                Content = model.Content,
+                Author = User.Identity?.Name ?? "Unknown",
+                TimeStamp = DateTime.Now
+            };
 
-            _repo.UpsertAsync(data);
-
+            await _repo.UpsertAsync(post);
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
-            var post = await _repo.GetByIdAsync(id); // Ensure 'post' is awaited and is of type 'BlogPost'  
+            var post = await _repo.GetByIdAsync(id);
             if (post == null) return NotFound();
 
-            var model = post.ToView();
+            var model = new BlogPostModel
+            {
+                ID = post.ID,
+                Title = post.Title,
+                Content = post.Content,
+                Author = post.Author,
+                Timestamp = post.TimeStamp
+            };
+
             return View(model);
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, BlogPostModel model)
         {
-            if (id != model.ID)
-            {
-                return BadRequest();
-            }
-
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var exists = await _repo.GetByIdAsync(id); // Await the Task<BlogPost> to get the BlogPost object
-            if (exists == null) return NotFound();
+            var post = new BlogPost
+            {
+                ID = id,
+                Title = model.Title,
+                Content = model.Content,
+                Author = User.Identity?.Name ?? model.Author,
+                TimeStamp = DateTime.Now
+            };
 
-            exists.Title = model.Title;
-            exists.Content = model.Content;
-            exists.Author = model.Author;
-
-            _repo.UpsertAsync(exists);
-
+            await _repo.UpsertAsync(post);
             return RedirectToAction(nameof(Index));
         }
     }

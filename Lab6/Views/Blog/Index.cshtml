@@ -1,9 +1,13 @@
-﻿@model IEnumerable<Lab6.Models.BlogPostModel>
+﻿@model IEnumerable<Lab6.Logic.BlogPost>
 
 @{
     ViewData["Title"] = "Blog";
-    var dateFormat = (string)ViewBag.DateFormat;
-    var summaryWordCount = (int)ViewBag.SummaryWordCount;
+
+    var dateFormat = (string)(ViewBag.DateFormat ?? "yyyy-MM-dd");
+
+    var summaryWordCount = ViewBag.SummaryWordCount is int swc && swc > 0
+        ? swc
+        : 50;
 }
 
 <h1>Blog Posts</h1>
@@ -29,7 +33,7 @@
                     </h5>
                     <h6 class="card-subtitle mb-2 text-muted">
                         @post.Author •
-                        @post.Timestamp?.ToString(dateFormat)
+                        @post.TimeStamp.ToString(dateFormat)
                     </h6>
                     <p class="card-text">
                         @summary
