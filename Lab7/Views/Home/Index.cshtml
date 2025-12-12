@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Home";
+    Layout = "_Layout";
+}
+
+<h1>Home</h1>
+
+<p>This page is public.</p>
+
+<p>
+    <a asp-action="Secret" asp-controller="Home" class="btn btn-primary">
+        Go to Secret (requires login)
+    </a>
+</p>
+

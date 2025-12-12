@@ -1,0 +1,38 @@
+﻿@model Lab7.Models.AddUserToRoleViewModel
+
+@{
+    ViewData["Title"] = "Add User To Role";
+    Layout = "_Layout";
+}
+
+<h1>Add User To Role</h1>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<form asp-action="AddUserToRole" method="post">
+    <div class="mb-3">
+        <label for="userId" class="form-label">User</label>
+        <select id="userId" name="userId" class="form-select">
+            @foreach (var u in Model.Users)
+            {
+                <option value="@u.Id">@u.UserName</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="roleName" class="form-label">Role</label>
+        <select id="roleName" name="roleName" class="form-select">
+            @foreach (var r in Model.Roles)
+            {
+                <option value="@r.Name">@r.Name</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>
+
