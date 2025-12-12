@@ -18,10 +18,24 @@ namespace Lab7.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Roles()
+        public async Task<IActionResult> Roles()
         {
             var roles = _roleManager.Roles.ToList();
-            return View(roles);
+            var model = new List<RolesWithUsersViewModel>();
+
+            foreach (var role in roles)
+            {
+                var usersInRole = await _userManager.GetUsersInRoleAsync(role.Name);
+
+                model.Add(new RolesWithUsersViewModel
+                {
+                    RoleId = role.Id,
+                    RoleName = role.Name,
+                    Users = usersInRole.Select(u => u.UserName).ToList()
+                });
+            }
+
+            return View(model);
         }
 
         [HttpGet]

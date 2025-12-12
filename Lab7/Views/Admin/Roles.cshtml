@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole>
+﻿@model IEnumerable<Lab7.Models.RolesWithUsersViewModel>
 
 @{
     ViewData["Title"] = "Roles";
@@ -17,14 +17,30 @@
         <tr>
             <th>Role Name</th>
             <th>Id</th>
+            <th>Users in Role</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var role in Model)
         {
             <tr>
-                <td>@role.Name</td>
-                <td>@role.Id</td>
+                <td>@role.RoleName</td>
+                <td>@role.RoleId.Substring(0,8)</td> @*wanted this shorter.*@
+                <td>
+                    @if (!role.Users.Any())
+                    {
+                        <span class="text-muted">No Users</span>
+                    }
+                    else
+                    {
+                        <ul>
+                            @foreach (var user in role.Users)
+                            {
+                                <li>@user</li>
+                            }
+                        </ul>
+                    }
+                </td>
             </tr>
         }
     </tbody>
